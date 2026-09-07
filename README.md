@@ -13,6 +13,37 @@ O laboratório teve como objetivo configurar, integrar e validar um **assistente
 
 ---
 
+## 📑 Sumário
+
+- [🎯 Objetivo](#-objetivo)
+- [🏗️ Arquitetura](#️-arquitetura)
+  - [Arquitetura geral da solução](#arquitetura-geral-da-solução)
+- [☁️ Serviços e tecnologias](#️-serviços-e-tecnologias)
+- [🧠 IA Generativa e agentes de IA](#-ia-generativa-e-agentes-de-ia)
+- [🔎 Knowledge Base e RAG](#-knowledge-base-e-rag)
+- [🔌 AgentCore Gateway e MCP](#-agentcore-gateway-e-mcp)
+- [📄 Schema da ferramenta](#-schema-da-ferramenta)
+- [⚡ AWS Lambda](#-aws-lambda)
+- [🗄️ Amazon DynamoDB](#️-amazon-dynamodb)
+- [💬 Validação pelo assistente](#-validação-pelo-assistente)
+- [🔄 Fluxo end-to-end](#-fluxo-end-to-end)
+- [☁️ Infraestrutura do laboratório](#️-infraestrutura-do-laboratório)
+- [🧪 Atividades hands-on realizadas](#-atividades-hands-on-realizadas)
+- [✅ Resultado final](#-resultado-final)
+- [💡 Principais aprendizados](#-principais-aprendizados)
+- [🎓 Contexto do projeto](#-contexto-do-projeto)
+- [📚 AWS re/Start](#-aws-restart)
+- [🔐 Segurança](#-segurança)
+- [⚠️ Observação](#️-observação)
+- [🚀 Próximos passos](#-próximos-passos)
+- [🧩 Competências demonstradas](#-competências-demonstradas)
+- [👨‍💻 Autor](#-autor)
+- [⭐ Sobre este repositório](#-sobre-este-repositório)
+
+---
+
+---
+
 ## 🎯 Objetivo
 
 Configurar e validar uma arquitetura de assistente de IA capaz de:
