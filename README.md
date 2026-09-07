@@ -15,34 +15,35 @@ O laboratório teve como objetivo configurar, integrar e validar um **assistente
 
 ## 📑 Sumário
 
-- [🎯 Objetivo](#-objetivo)
-- [🏗️ Arquitetura](#️-arquitetura)
+- [🎯 Objetivo](#objetivo)
+- [🏗️ Arquitetura](#arquitetura)
   - [Arquitetura geral da solução](#arquitetura-geral-da-solução)
-- [☁️ Serviços e tecnologias](#️-serviços-e-tecnologias)
-- [🧠 IA Generativa e agentes de IA](#-ia-generativa-e-agentes-de-ia)
-- [🔎 Knowledge Base e RAG](#-knowledge-base-e-rag)
-- [🔌 AgentCore Gateway e MCP](#-agentcore-gateway-e-mcp)
-- [📄 Schema da ferramenta](#-schema-da-ferramenta)
-- [⚡ AWS Lambda](#-aws-lambda)
-- [🗄️ Amazon DynamoDB](#️-amazon-dynamodb)
-- [💬 Validação pelo assistente](#-validação-pelo-assistente)
-- [🔄 Fluxo end-to-end](#-fluxo-end-to-end)
-- [☁️ Infraestrutura do laboratório](#️-infraestrutura-do-laboratório)
-- [🧪 Atividades hands-on realizadas](#-atividades-hands-on-realizadas)
-- [✅ Resultado final](#-resultado-final)
-- [💡 Principais aprendizados](#-principais-aprendizados)
-- [🎓 Contexto do projeto](#-contexto-do-projeto)
-- [📚 AWS re/Start](#-aws-restart)
-- [🔐 Segurança](#-segurança)
-- [⚠️ Observação](#️-observação)
-- [🚀 Próximos passos](#-próximos-passos)
-- [🧩 Competências demonstradas](#-competências-demonstradas)
-- [👨‍💻 Autor](#-autor)
-- [⭐ Sobre este repositório](#-sobre-este-repositório)
+- [☁️ Serviços e tecnologias](#serviços-e-tecnologias)
+- [🧠 IA Generativa e agentes de IA](#ia-generativa-e-agentes-de-ia)
+- [🔎 Knowledge Base e RAG](#knowledge-base-e-rag)
+- [🔌 AgentCore Gateway e MCP](#agentcore-gateway-e-mcp)
+- [📄 Schema da ferramenta](#schema-da-ferramenta)
+- [⚡ AWS Lambda](#aws-lambda)
+- [🗄️ Amazon DynamoDB](#amazon-dynamodb)
+- [💬 Validação pelo assistente](#validação-pelo-assistente)
+- [🔄 Fluxo end-to-end](#fluxo-end-to-end)
+- [☁️ Infraestrutura do laboratório](#infraestrutura-do-laboratório)
+- [🧪 Atividades hands-on realizadas](#atividades-hands-on-realizadas)
+- [📸 Evidências do laboratório](#evidências-do-laboratório)
+- [✅ Resultado final](#resultado-final)
+- [💡 Principais aprendizados](#principais-aprendizados)
+- [🎓 Contexto do projeto](#contexto-do-projeto)
+- [📚 AWS re/Start](#aws-restart)
+- [🔐 Segurança](#segurança)
+- [⚠️ Observação](#observação)
+- [🚀 Próximos passos](#próximos-passos)
+- [🧩 Competências demonstradas](#competências-demonstradas)
+- [👨‍💻 Autor](#autor)
+- [⭐ Sobre este repositório](#sobre-este-repositório)
 
 ---
 
----
+<a id="objetivo"></a>
 
 ## 🎯 Objetivo
 
@@ -59,7 +60,11 @@ Configurar e validar uma arquitetura de assistente de IA capaz de:
 
 ---
 
+<a id="arquitetura"></a>
+
 # 🏗️ Arquitetura
+
+<a id="arquitetura-geral-da-solução"></a>
 
 ## Arquitetura geral da solução
 
@@ -122,6 +127,8 @@ flowchart LR
 
 ---
 
+<a id="serviços-e-tecnologias"></a>
+
 # ☁️ Serviços e tecnologias
 
 Durante o laboratório foram utilizados conceitos e serviços relacionados a:
@@ -141,6 +148,8 @@ Durante o laboratório foram utilizados conceitos e serviços relacionados a:
 - Integração entre serviços AWS
 
 ---
+
+<a id="ia-generativa-e-agentes-de-ia"></a>
 
 # 🧠 IA Generativa e agentes de IA
 
@@ -204,6 +213,8 @@ Esse padrão aproxima a solução do conceito de **Agentic AI**, no qual modelos
 
 ---
 
+<a id="knowledge-base-e-rag"></a>
+
 # 🔎 Knowledge Base e RAG
 
 O Amazon Bedrock Knowledge Base permite utilizar documentos armazenados no Amazon S3 como fonte de conhecimento para o assistente.
@@ -252,6 +263,8 @@ Esse padrão é conhecido como **Retrieval-Augmented Generation (RAG)**.
 O RAG permite combinar modelos de linguagem com informações externas ou corporativas, fornecendo contexto específico para a geração das respostas.
 
 ---
+
+<a id="agentcore-gateway-e-mcp"></a>
 
 # 🔌 AgentCore Gateway e MCP
 
@@ -311,6 +324,8 @@ O **Model Context Protocol (MCP)** permite disponibilizar ferramentas e recursos
 
 ---
 
+<a id="schema-da-ferramenta"></a>
+
 # 📄 Schema da ferramenta
 
 Para disponibilizar a função ao AgentCore Gateway, foi utilizado um schema armazenado no Amazon S3.
@@ -356,6 +371,8 @@ flowchart LR
 O schema define a estrutura esperada pela ferramenta e permite que o Gateway disponibilize corretamente a função ao agente.
 
 ---
+
+<a id="aws-lambda"></a>
 
 # ⚡ AWS Lambda
 
@@ -415,6 +432,8 @@ Esse fluxo demonstra como um agente pode utilizar uma função **serverless** pa
 
 ---
 
+<a id="amazon-dynamodb"></a>
+
 # 🗄️ Amazon DynamoDB
 
 Após a execução da função Lambda, os dados foram persistidos na tabela:
@@ -469,6 +488,8 @@ A presença desse registro confirmou que a solicitação percorreu corretamente 
 
 ---
 
+<a id="validação-pelo-assistente"></a>
+
 # 💬 Validação pelo assistente
 
 A solução foi testada através da interface de chat disponibilizada no laboratório.
@@ -516,6 +537,8 @@ sequenceDiagram
 O assistente confirmou o processamento da solicitação e o registro foi posteriormente verificado diretamente no DynamoDB.
 
 ---
+
+<a id="fluxo-end-to-end"></a>
 
 # 🔄 Fluxo end-to-end
 
@@ -591,6 +614,8 @@ flowchart TB
 
 ---
 
+<a id="infraestrutura-do-laboratório"></a>
+
 # ☁️ Infraestrutura do laboratório
 
 Parte da infraestrutura utilizada no laboratório foi provisionada automaticamente pelo ambiente AWS SimuLearn.
@@ -649,6 +674,8 @@ flowchart TB
 
 ---
 
+<a id="atividades-hands-on-realizadas"></a>
+
 # 🧪 Atividades hands-on realizadas
 
 Durante o laboratório:
@@ -672,6 +699,86 @@ Durante o laboratório:
 - validei o fluxo completo da solução.
 
 ---
+
+<a id="evidências-do-laboratório"></a>
+
+# 📸 Evidências do laboratório
+
+As imagens abaixo registram as principais etapas práticas realizadas durante o laboratório **AWS SimuLearn**, desde a configuração dos componentes até a execução e validação final da solução.
+
+## 1. Arquitetura e conclusão do laboratório
+
+Validação final do AWS SimuLearn, apresentando a arquitetura completa da solução com **Amazon Bedrock AgentCore, AgentCore Gateway/MCP, AWS Lambda, Amazon DynamoDB, Knowledge Base e Amazon S3**.
+
+![Arquitetura e conclusão do AWS SimuLearn](assets/evidence/01-simulearn-success-architecture.png)
+
+---
+
+## 2. AgentCore Gateway e destino `submitBenefits`
+
+Configuração do **Amazon Bedrock AgentCore Gateway** com o destino `submitBenefits`, utilizando **MCP** e integração com AWS Lambda.
+
+A evidência demonstra que o destino foi criado corretamente e alcançou o status **Ready**.
+
+![AgentCore Gateway com destino submitBenefits pronto](assets/evidence/02-agentcore-gateway-destino-submitbenefits-pronto.png)
+
+---
+
+## 3. Configuração do destino MCP com AWS Lambda
+
+Configuração da integração do destino `submitBenefits` com a função AWS Lambda:
+
+```text
+submit_benefits
+```
+
+Também foi utilizado o schema da ferramenta armazenado no Amazon S3 para disponibilizar a função através do Gateway.
+
+![Configuração do destino MCP com AWS Lambda](assets/evidence/03-configuracao-destino-mcp-lambda.png)
+
+---
+
+## 4. Execução da solicitação pelo Assistente de RH
+
+Validação do fluxo através da aplicação de chat do laboratório.
+
+Foi enviada uma solicitação de benefício para:
+
+```text
+Funcionário: Jane Doe
+Benefício: assistência médica
+Valor: R$ 250
+```
+
+O assistente processou a solicitação e retornou a confirmação de envio com sucesso.
+
+![Assistente de RH - solicitação de benefício concluída com sucesso](assets/evidence/04-assistente-rh-solicitacao-beneficio-sucesso.png)
+
+---
+
+## 5. Persistência no Amazon DynamoDB
+
+Após a execução pelo agente, a solicitação foi verificada na tabela de benefícios do **Amazon DynamoDB**.
+
+Registro confirmado:
+
+```text
+employee_name: Jane Doe
+benefit_type: medical
+claim_amount: 250
+```
+
+Essa evidência confirma a persistência dos dados após a execução da ferramenta através do fluxo:
+
+```text
+AgentCore → Gateway/MCP → Lambda → DynamoDB
+```
+
+![Exploração da tabela de benefícios no DynamoDB](assets/evidence/05-dynamodb-exploracao-tabela-beneficios.png)
+
+---
+
+<a id="resultado-final"></a>
 
 # ✅ Resultado final
 
@@ -717,9 +824,29 @@ flowchart LR
     class SUCCESS success
 ```
 
-A solicitação enviada pelo assistente foi processada corretamente e o registro correspondente foi confirmado no DynamoDB.
+A solicitação enviada pelo assistente foi processada corretamente e o registro correspondente foi confirmado no Amazon DynamoDB.
+
+Fluxo validado:
+
+```text
+Usuário
+   ↓
+Assistente de RH
+   ↓
+Amazon Bedrock AgentCore
+   ↓
+AgentCore Gateway / MCP
+   ↓
+AWS Lambda
+   ↓
+Amazon DynamoDB
+   ↓
+Validação concluída
+```
 
 ---
+
+<a id="principais-aprendizados"></a>
 
 # 💡 Principais aprendizados
 
@@ -748,6 +875,8 @@ O laboratório proporcionou prática em conceitos relacionados a:
 
 ---
 
+<a id="contexto-do-projeto"></a>
+
 # 🎓 Contexto do projeto
 
 Este projeto foi realizado em um **ambiente hands-on de laboratório AWS SimuLearn**, como parte do processo de aprendizagem em cloud e Inteligência Artificial.
@@ -763,6 +892,8 @@ dos componentes da solução.
 Este repositório representa, portanto, **experiência prática em ambiente de laboratório AWS**, e não uma aplicação comercial implantada em produção.
 
 ---
+
+<a id="aws-restart"></a>
 
 # 📚 AWS re/Start
 
@@ -790,6 +921,8 @@ O laboratório faz parte da experiência prática desenvolvida durante o program
 
 ---
 
+<a id="segurança"></a>
+
 # 🔐 Segurança
 
 Por segurança, informações sensíveis do ambiente do laboratório não são publicadas neste repositório.
@@ -807,9 +940,11 @@ Não são disponibilizados:
 - usuários temporários;
 - arquivos internos restritos do laboratório.
 
-As evidências visuais utilizadas no portfólio devem ser revisadas ou anonimizadas antes da publicação.
+As evidências visuais utilizadas neste portfólio foram selecionadas com foco na demonstração técnica da solução, evitando a exposição desnecessária de informações do ambiente AWS.
 
 ---
+
+<a id="observação"></a>
 
 # ⚠️ Observação
 
@@ -820,6 +955,8 @@ Ele documenta atividades e conhecimentos adquiridos durante um laboratório hand
 Não representa uma infraestrutura AWS comercial ou um ambiente de produção.
 
 ---
+
+<a id="próximos-passos"></a>
 
 # 🚀 Próximos passos
 
@@ -840,11 +977,15 @@ Como evolução deste aprendizado:
 
 ---
 
+<a id="competências-demonstradas"></a>
+
 # 🧩 Competências demonstradas
 
 **GenAI • RAG • AI Agents • Amazon Bedrock • AgentCore • MCP • AWS Lambda • DynamoDB • Amazon S3 • CloudFormation • IAM • Serverless • Cloud Computing**
 
 ---
+
+<a id="autor"></a>
 
 # 👨‍💻 Autor
 
@@ -859,6 +1000,8 @@ GitHub: [Rogerio5](https://github.com/Rogerio5)
 LinkedIn: [Rogério Augusto Sabino](https://www.linkedin.com/in/rogerio-augusto-sabino/)
 
 ---
+
+<a id="sobre-este-repositório"></a>
 
 # ⭐ Sobre este repositório
 
