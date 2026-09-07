@@ -28,38 +28,54 @@ Configurar e validar uma arquitetura de assistente de IA capaz de:
 
 ---
 
-## 🏗️ Arquitetura
-
-O fluxo utilizado no laboratório pode ser representado da seguinte forma:
-
-```text
-Usuário
-   │
-   ▼
-Web Application / Chat
-   │
-   ▼
-Amazon Bedrock AgentCore
-   │
-   ├──────────────────────► Knowledge Base / RAG
-   │                              │
-   │                              ▼
-   │                          Amazon S3
-   │
-   ▼
-Amazon Bedrock AgentCore Gateway
-   │
-   │ MCP
-   ▼
-AWS Lambda
-submit_benefits
-   │
-   ▼
-Amazon DynamoDB
-BenefitsTable
-```
+## 🏗️ Arquitetura da solução
 
 A arquitetura combina **IA Generativa, recuperação de conhecimento e execução de ações**, permitindo que o assistente não apenas responda perguntas, mas também interaja com outros serviços.
+
+```mermaid
+flowchart LR
+
+    USER["👤 Usuário"]
+    WEB["💬 Web Application<br/>HR Assistant"]
+
+    AGENT["🤖 Amazon Bedrock<br/>AgentCore"]
+
+    KB["🧠 Amazon Bedrock<br/>Knowledge Base"]
+    S3KB[("🪣 Amazon S3<br/>Knowledge Base")]
+
+    GATEWAY["🔌 Amazon Bedrock<br/>AgentCore Gateway"]
+    MCP["🔗 MCP<br/>Model Context Protocol"]
+
+    LAMBDA["⚡ AWS Lambda<br/>submit_benefits"]
+
+    DB[("🗄️ Amazon DynamoDB<br/>BenefitsTable")]
+
+    USER --> WEB
+    WEB --> AGENT
+
+    AGENT -->|"Recuperação de conhecimento"| KB
+    KB -->|"Acessa documentos"| S3KB
+
+    AGENT -->|"Executa ferramenta"| GATEWAY
+    GATEWAY --> MCP
+    MCP --> LAMBDA
+
+    LAMBDA -->|"Grava solicitação"| DB
+
+    classDef user fill:#1565C0,stroke:#0D47A1,color:#ffffff,stroke-width:2px
+    classDef ai fill:#6A1B9A,stroke:#4A148C,color:#ffffff,stroke-width:2px
+    classDef knowledge fill:#00875A,stroke:#006644,color:#ffffff,stroke-width:2px
+    classDef integration fill:#E65100,stroke:#BF360C,color:#ffffff,stroke-width:2px
+    classDef compute fill:#F9A825,stroke:#F57F17,color:#111111,stroke-width:2px
+    classDef database fill:#C2185B,stroke:#880E4F,color:#ffffff,stroke-width:2px
+
+    class USER,WEB user
+    class AGENT ai
+    class KB,S3KB knowledge
+    class GATEWAY,MCP integration
+    class LAMBDA compute
+    class DB database
+```
 
 ---
 
@@ -83,55 +99,104 @@ Durante o laboratório foram utilizados conceitos e serviços relacionados a:
 
 ---
 
-## 🧠 IA Generativa e Agentes de IA
+## 🧠 IA Generativa e agentes de IA
 
-O laboratório demonstra um padrão no qual um assistente de IA pode combinar geração de respostas com recuperação de conhecimento e utilização de ferramentas.
+A arquitetura demonstra que o assistente não atua apenas como chatbot. O agente pode recuperar conhecimento e também executar ações externas.
 
-```text
-Assistente de IA
-      │
-      ├──── Recupera conhecimento
-      │           │
-      │           ▼
-      │     Knowledge Base / RAG
-      │
-      └──── Executa ações
-                  │
-                  ▼
-             MCP Gateway
-                  │
-                  ▼
-               Lambda
-                  │
-                  ▼
-              DynamoDB
+```mermaid
+flowchart TB
+
+    REQUEST["💬 Solicitação do usuário"]
+
+    AGENT["🤖 Agente de IA<br/>Amazon Bedrock AgentCore"]
+
+    DECISION{"O que o agente<br/>precisa fazer?"}
+
+    RAG["📚 Recuperar conhecimento"]
+    TOOL["🛠️ Executar ferramenta"]
+
+    KB["🧠 Knowledge Base<br/>RAG"]
+    MCP["🔗 MCP Gateway"]
+
+    ANSWER["💡 Gerar resposta"]
+    ACTION["⚙️ Executar ação"]
+
+    REQUEST --> AGENT
+    AGENT --> DECISION
+
+    DECISION -->|"Consultar informação"| RAG
+    DECISION -->|"Executar tarefa"| TOOL
+
+    RAG --> KB
+    KB --> ANSWER
+
+    TOOL --> MCP
+    MCP --> ACTION
+
+    ANSWER --> RESULT["✅ Resposta ao usuário"]
+    ACTION --> RESULT
+
+    classDef input fill:#1565C0,stroke:#0D47A1,color:#ffffff
+    classDef ai fill:#6A1B9A,stroke:#4A148C,color:#ffffff
+    classDef rag fill:#00875A,stroke:#006644,color:#ffffff
+    classDef tool fill:#E65100,stroke:#BF360C,color:#ffffff
+    classDef result fill:#455A64,stroke:#263238,color:#ffffff
+
+    class REQUEST input
+    class AGENT,DECISION ai
+    class RAG,KB rag
+    class TOOL,MCP,ACTION tool
+    class ANSWER,RESULT result
 ```
 
 Essa arquitetura permite que o modelo de linguagem seja integrado a recursos externos em vez de funcionar apenas como um chatbot isolado.
 
 ---
 
+
 ## 🔎 Knowledge Base e RAG
 
-O assistente utiliza uma **Knowledge Base do Amazon Bedrock** para recuperar informações relevantes a partir de documentos armazenados no Amazon S3.
+O Amazon Bedrock Knowledge Base permite recuperar informações armazenadas no Amazon S3 para fornecer contexto ao agente.
 
-O fluxo conceitual é:
+```mermaid
+flowchart LR
 
-```text
-Pergunta do usuário
-        │
-        ▼
-Amazon Bedrock AgentCore
-        │
-        ▼
-Knowledge Base
-        │
-        ▼
-Recuperação de contexto
-        │
-        ▼
-Resposta fundamentada nos documentos
+    QUESTION["❓ Pergunta do usuário"]
+
+    AGENT["🤖 Amazon Bedrock<br/>AgentCore"]
+
+    SEARCH["🔎 Consulta à<br/>Knowledge Base"]
+
+    KB["🧠 Amazon Bedrock<br/>Knowledge Base"]
+
+    S3[("🪣 Amazon S3<br/>Documentos")]
+
+    CONTEXT["📄 Contexto relevante"]
+
+    RESPONSE["💬 Resposta baseada<br/>nos documentos"]
+
+    QUESTION --> AGENT
+    AGENT --> SEARCH
+    SEARCH --> KB
+
+    KB -->|"Consulta fonte"| S3
+    S3 -->|"Documentos relevantes"| KB
+
+    KB --> CONTEXT
+    CONTEXT --> AGENT
+    AGENT --> RESPONSE
+
+    classDef user fill:#1565C0,stroke:#0D47A1,color:#ffffff
+    classDef ai fill:#6A1B9A,stroke:#4A148C,color:#ffffff
+    classDef rag fill:#00875A,stroke:#006644,color:#ffffff
+    classDef output fill:#455A64,stroke:#263238,color:#ffffff
+
+    class QUESTION user
+    class AGENT ai
+    class SEARCH,KB,S3,CONTEXT rag
+    class RESPONSE output
 ```
+
 
 Esse padrão é conhecido como **Retrieval-Augmented Generation (RAG)**.
 
@@ -141,18 +206,38 @@ O RAG permite combinar modelos de linguagem com informações externas ou corpor
 
 ## 🔌 Integração com MCP
 
-Durante a etapa prática foi configurado um destino no **Amazon Bedrock AgentCore Gateway**.
+Durante o laboratório, foi configurado um destino chamado `submitBenefits` no AgentCore Gateway.
 
-O destino criado foi:
+```mermaid
+flowchart LR
 
-```text
-submitBenefits
-```
+    AGENT["🤖 Amazon Bedrock<br/>AgentCore"]
 
-Esse destino foi integrado à função:
+    GATEWAY["🔌 AgentCore Gateway"]
 
-```text
-submit_benefits
+    TARGET["🎯 Destino<br/>submitBenefits"]
+
+    MCP["🔗 MCP"]
+
+    LAMBDA["⚡ AWS Lambda<br/>submit_benefits"]
+
+    DB[("🗄️ DynamoDB<br/>BenefitsTable")]
+
+    AGENT -->|"Solicita execução"| GATEWAY
+    GATEWAY --> TARGET
+    TARGET --> MCP
+    MCP --> LAMBDA
+    LAMBDA -->|"Persistência"| DB
+
+    classDef ai fill:#6A1B9A,stroke:#4A148C,color:#ffffff
+    classDef integration fill:#E65100,stroke:#BF360C,color:#ffffff
+    classDef compute fill:#F9A825,stroke:#F57F17,color:#111111
+    classDef database fill:#C2185B,stroke:#880E4F,color:#ffffff
+
+    class AGENT ai
+    class GATEWAY,TARGET,MCP integration
+    class LAMBDA compute
+    class DB database
 ```
 
 utilizando o **Model Context Protocol (MCP)**.
@@ -163,95 +248,117 @@ O MCP permite disponibilizar ferramentas e recursos externos para agentes de IA 
 
 ## 📄 Schema da ferramenta
 
-Para disponibilizar a função ao agente, foi utilizado um arquivo de schema armazenado no Amazon S3.
+O AgentCore Gateway utiliza um schema armazenado no Amazon S3 para compreender a estrutura da ferramenta disponível ao agente.
 
-Arquivo utilizado:
+```mermaid
+flowchart LR
 
-```text
-submit_benefits.json
-```
+    S3[("🪣 Amazon S3")]
 
-O schema define a estrutura dos dados esperados pela ferramenta e permite que o agente compreenda como utilizá-la.
+    SCHEMA["📄 submit_benefits.json"]
 
-O fluxo foi:
+    GATEWAY["🔌 AgentCore Gateway"]
 
-```text
-Amazon S3
-   │
-   ▼
-Schema da ferramenta
-   │
-   ▼
-AgentCore Gateway
-   │
-   ▼
-MCP
-   │
-   ▼
-AWS Lambda
+    MCP["🔗 MCP"]
+
+    LAMBDA["⚡ AWS Lambda<br/>submit_benefits"]
+
+    S3 --> SCHEMA
+    SCHEMA -->|"Define ferramenta"| GATEWAY
+    GATEWAY --> MCP
+    MCP --> LAMBDA
+
+    classDef storage fill:#00875A,stroke:#006644,color:#ffffff
+    classDef schema fill:#0277BD,stroke:#01579B,color:#ffffff
+    classDef integration fill:#E65100,stroke:#BF360C,color:#ffffff
+    classDef compute fill:#F9A825,stroke:#F57F17,color:#111111
+
+    class S3 storage
+    class SCHEMA schema
+    class GATEWAY,MCP integration
+    class LAMBDA compute
 ```
 
 ---
 
-## ⚡ AWS Lambda
+## ⚡ Execução da AWS Lambda
 
-A função AWS Lambda utilizada no laboratório foi:
+A função `submit_benefits` processa a solicitação recebida pelo agente e grava os dados no DynamoDB.
 
-```text
-submit_benefits
-```
+```mermaid
+flowchart LR
 
-Ela foi integrada ao AgentCore Gateway para processar solicitações de benefícios enviadas pelo assistente.
+    REQUEST["📨 Solicitação de benefício"]
 
-Fluxo:
+    AGENT["🤖 AgentCore"]
 
-```text
-Usuário
-   │
-   ▼
-Assistente de IA
-   │
-   ▼
-Amazon Bedrock AgentCore
-   │
-   ▼
-MCP Gateway
-   │
-   ▼
-AWS Lambda
-   │
-   ▼
-Amazon DynamoDB
+    MCP["🔗 MCP Gateway"]
+
+    LAMBDA["⚡ AWS Lambda<br/>submit_benefits"]
+
+    PROCESS["⚙️ Processamento<br/>da solicitação"]
+
+    DB[("🗄️ DynamoDB<br/>BenefitsTable")]
+
+    CONFIRM["✅ Confirmação<br/>ao assistente"]
+
+    REQUEST --> AGENT
+    AGENT --> MCP
+    MCP --> LAMBDA
+    LAMBDA --> PROCESS
+    PROCESS --> DB
+    DB --> CONFIRM
+
+    classDef input fill:#1565C0,stroke:#0D47A1,color:#ffffff
+    classDef ai fill:#6A1B9A,stroke:#4A148C,color:#ffffff
+    classDef integration fill:#E65100,stroke:#BF360C,color:#ffffff
+    classDef compute fill:#F9A825,stroke:#F57F17,color:#111111
+    classDef database fill:#C2185B,stroke:#880E4F,color:#ffffff
+    classDef result fill:#2E7D32,stroke:#1B5E20,color:#ffffff
+
+    class REQUEST input
+    class AGENT ai
+    class MCP integration
+    class LAMBDA,PROCESS compute
+    class DB database
+    class CONFIRM result
 ```
 
 Esse processo demonstra como agentes de IA podem utilizar funções serverless para executar ações dentro de uma aplicação.
 
 ---
 
-## 🗄️ Amazon DynamoDB
+## 🗄️ Persistência no DynamoDB
 
-Após a execução da função Lambda, os dados da solicitação foram persistidos no Amazon DynamoDB.
+O resultado da execução da função Lambda foi registrado na tabela `BenefitsTable`.
 
-Tabela utilizada:
+```mermaid
+flowchart TB
 
-```text
-BenefitsTable
-```
+    LAMBDA["⚡ AWS Lambda<br/>submit_benefits"]
 
-Durante a validação foi possível confirmar atributos como:
+    DB[("🗄️ Amazon DynamoDB<br/>BenefitsTable")]
 
-```text
-employee_name
-benefit_type
-claim_amount
-```
+    RECORD["📋 Registro criado"]
 
-Exemplo utilizado durante o laboratório:
+    NAME["employee_name<br/>Jane Doe"]
+    TYPE["benefit_type<br/>medical"]
+    VALUE["claim_amount<br/>250"]
 
-```text
-employee_name: Jane Doe
-benefit_type: medical
-claim_amount: 250
+    LAMBDA -->|"PutItem"| DB
+    DB --> RECORD
+
+    RECORD --> NAME
+    RECORD --> TYPE
+    RECORD --> VALUE
+
+    classDef compute fill:#F9A825,stroke:#F57F17,color:#111111
+    classDef database fill:#C2185B,stroke:#880E4F,color:#ffffff
+    classDef data fill:#1565C0,stroke:#0D47A1,color:#ffffff
+
+    class LAMBDA compute
+    class DB database
+    class RECORD,NAME,TYPE,VALUE data
 ```
 
 A presença desse registro confirmou que a chamada realizada pelo assistente percorreu corretamente a arquitetura até a camada de persistência.
@@ -260,90 +367,172 @@ A presença desse registro confirmou que a chamada realizada pelo assistente per
 
 ## 💬 Validação pelo assistente
 
-A aplicação disponibilizou uma interface de chat para interação com o assistente de RH.
+O fluxo foi testado através da aplicação de chat fornecida no laboratório.
 
-Durante a validação foi enviada uma solicitação de benefício pelo chat.
+```mermaid
+sequenceDiagram
 
-O fluxo executado foi:
+    participant U as 👤 Usuário
+    participant W as 💬 Web App
+    participant A as 🤖 AgentCore
+    participant G as 🔌 MCP Gateway
+    participant L as ⚡ Lambda
+    participant D as 🗄️ DynamoDB
 
-```text
-Chat
-  │
-  ▼
-Amazon Bedrock AgentCore
-  │
-  ▼
-AgentCore Gateway
-  │
-  ▼
-MCP
-  │
-  ▼
-AWS Lambda
-  │
-  ▼
-Amazon DynamoDB
+    U->>W: Solicitação de benefício
+    W->>A: Envia mensagem
+    A->>G: Solicita execução da ferramenta
+    G->>L: Invoke submit_benefits
+    L->>D: Registra benefício
+    D-->>L: Confirma gravação
+    L-->>G: Resultado
+    G-->>A: Resultado da ferramenta
+    A-->>W: Confirma solicitação
+    W-->>U: Solicitação enviada com sucesso
 ```
 
 O assistente confirmou o processamento da solicitação e o registro correspondente foi posteriormente verificado no DynamoDB.
 
 ---
 
-## 🧪 Atividades hands-on realizadas
+## 🔄 Fluxo end-to-end
 
-Durante o laboratório:
+A execução completa do laboratório pode ser representada da seguinte maneira:
 
-- explorei a arquitetura de uma solução de IA Generativa na AWS;
-- utilizei o Amazon Bedrock AgentCore;
-- trabalhei com Amazon Bedrock Knowledge Base;
-- analisei o funcionamento de RAG em uma solução de IA;
-- configurei um destino no AgentCore Gateway;
-- utilizei MCP para integração entre agente e ferramenta;
-- conectei o Gateway a uma função AWS Lambda;
-- utilizei um schema armazenado no Amazon S3;
-- configurei o destino `submitBenefits`;
-- integrei a função `submit_benefits`;
-- utilizei a aplicação de chat do laboratório;
-- enviei uma solicitação através do assistente;
-- validei a execução da ação;
-- consultei os dados no Amazon DynamoDB;
-- confirmei a persistência das informações na `BenefitsTable`;
-- naveguei pelos recursos provisionados via AWS CloudFormation;
-- validei o fluxo completo da solução.
+```mermaid
+flowchart TB
+
+    STEP1["1️⃣ Usuário envia solicitação"]
+
+    STEP2["2️⃣ Web Application envia mensagem"]
+
+    STEP3["3️⃣ AgentCore interpreta a solicitação"]
+
+    STEP4{"4️⃣ Precisa consultar<br/>ou executar?"}
+
+    RAG["5️⃣ Knowledge Base / RAG"]
+    TOOL["5️⃣ AgentCore Gateway / MCP"]
+
+    CONTEXT["6️⃣ Recuperação de contexto"]
+    LAMBDA["6️⃣ AWS Lambda"]
+
+    DB["7️⃣ Amazon DynamoDB"]
+
+    RESULT["8️⃣ Resultado retorna ao agente"]
+
+    RESPONSE["9️⃣ Resposta ao usuário"]
+
+    STEP1 --> STEP2
+    STEP2 --> STEP3
+    STEP3 --> STEP4
+
+    STEP4 -->|"Conhecimento"| RAG
+    STEP4 -->|"Ação"| TOOL
+
+    RAG --> CONTEXT
+    CONTEXT --> RESULT
+
+    TOOL --> LAMBDA
+    LAMBDA --> DB
+    DB --> RESULT
+
+    RESULT --> RESPONSE
+
+    classDef user fill:#1565C0,stroke:#0D47A1,color:#ffffff
+    classDef ai fill:#6A1B9A,stroke:#4A148C,color:#ffffff
+    classDef rag fill:#00875A,stroke:#006644,color:#ffffff
+    classDef integration fill:#E65100,stroke:#BF360C,color:#ffffff
+    classDef compute fill:#F9A825,stroke:#F57F17,color:#111111
+    classDef database fill:#C2185B,stroke:#880E4F,color:#ffffff
+    classDef output fill:#2E7D32,stroke:#1B5E20,color:#ffffff
+
+    class STEP1,STEP2 user
+    class STEP3,STEP4 ai
+    class RAG,CONTEXT rag
+    class TOOL integration
+    class LAMBDA compute
+    class DB database
+    class RESULT,RESPONSE output
+```
 
 ---
 
-## ✅ Resultado
+## ☁️ Infraestrutura do laboratório
 
-O laboratório foi concluído e validado com sucesso no **AWS SimuLearn**.
+Os recursos utilizados no laboratório foram provisionados através da infraestrutura preparada para o AWS SimuLearn.
 
-Fluxo validado:
+```mermaid
+flowchart TB
 
-```text
-Usuário
-  │
-  ▼
-Chat
-  │
-  ▼
-Amazon Bedrock AgentCore
-  │
-  ▼
-Knowledge Base / RAG
-  │
-  └───────────────┐
-                  │
-                  ▼
-         AgentCore Gateway
-                  │
-                  ▼
-                 MCP
-                  │
-                  ▼
-             AWS Lambda
-                  │
-                  ▼
-          Amazon DynamoDB
+    CF["☁️ AWS CloudFormation"]
+
+    CF --> AGENT["🤖 Amazon Bedrock<br/>AgentCore"]
+
+    CF --> GATEWAY["🔌 AgentCore Gateway"]
+
+    CF --> LAMBDA["⚡ AWS Lambda"]
+
+    CF --> DYNAMO[("🗄️ Amazon DynamoDB")]
+
+    CF --> S3[("🪣 Amazon S3")]
+
+    CF --> KB["🧠 Bedrock<br/>Knowledge Base"]
+
+    CF --> IAM["🔐 AWS IAM"]
+
+    classDef infra fill:#263238,stroke:#000000,color:#ffffff,stroke-width:2px
+    classDef ai fill:#6A1B9A,stroke:#4A148C,color:#ffffff
+    classDef integration fill:#E65100,stroke:#BF360C,color:#ffffff
+    classDef compute fill:#F9A825,stroke:#F57F17,color:#111111
+    classDef database fill:#C2185B,stroke:#880E4F,color:#ffffff
+    classDef storage fill:#00875A,stroke:#006644,color:#ffffff
+    classDef security fill:#455A64,stroke:#263238,color:#ffffff
+
+    class CF infra
+    class AGENT,KB ai
+    class GATEWAY integration
+    class LAMBDA compute
+    class DYNAMO database
+    class S3 storage
+    class IAM security
+```
+
+
+---
+
+## ✅ Resultado final
+
+O laboratório foi validado com sucesso.
+
+```mermaid
+flowchart LR
+
+    CHAT["💬 Chat"]
+    AGENT["🤖 Amazon Bedrock<br/>AgentCore"]
+    MCP["🔌 Gateway / MCP"]
+    LAMBDA["⚡ AWS Lambda"]
+    DB[("🗄️ DynamoDB")]
+    SUCCESS["✅ Validação concluída"]
+
+    CHAT --> AGENT
+    AGENT --> MCP
+    MCP --> LAMBDA
+    LAMBDA --> DB
+    DB --> SUCCESS
+
+    classDef user fill:#1565C0,stroke:#0D47A1,color:#ffffff
+    classDef ai fill:#6A1B9A,stroke:#4A148C,color:#ffffff
+    classDef integration fill:#E65100,stroke:#BF360C,color:#ffffff
+    classDef compute fill:#F9A825,stroke:#F57F17,color:#111111
+    classDef database fill:#C2185B,stroke:#880E4F,color:#ffffff
+    classDef success fill:#2E7D32,stroke:#1B5E20,color:#ffffff
+
+    class CHAT user
+    class AGENT ai
+    class MCP integration
+    class LAMBDA compute
+    class DB database
+    class SUCCESS success
 ```
 
 A solicitação enviada pelo assistente foi processada corretamente e o registro foi confirmado no DynamoDB.
