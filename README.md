@@ -62,11 +62,11 @@ Configurar e validar uma arquitetura de assistente de IA capaz de:
 
 <a id="arquitetura"></a>
 
-# 🏗️ Arquitetura
+## 🏗️ Arquitetura
 
 <a id="arquitetura-geral-da-solução"></a>
 
-## Arquitetura geral da solução
+### Arquitetura geral da solução
 
 ```mermaid
 flowchart LR
@@ -114,7 +114,7 @@ flowchart LR
     class DB database
 ```
 
-### Legenda da arquitetura
+#### Legenda da arquitetura
 
 | Cor | Responsabilidade |
 |---|---|
@@ -128,6 +128,8 @@ flowchart LR
 ---
 
 <a id="serviços-e-tecnologias"></a>
+
+## ☁️ Serviços e tecnologias
 
 # ☁️ Serviços e tecnologias
 
